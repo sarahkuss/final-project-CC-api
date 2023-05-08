@@ -17,7 +17,7 @@ export async function addOrganization(req, res) {
     res.status(500).send(err)
     return
   })
-  res.status(201).send({message: "New Organization Added"})
+  getAllOrganizations(req,res)
 }
 
 // DELETE

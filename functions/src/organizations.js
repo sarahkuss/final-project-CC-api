@@ -7,7 +7,6 @@ export async function getAllOrganizations(req, res) {
   res.send(organizations)
 }
 
-
 // POST
 export async function addOrganization(req, res) {
   const newOrganization = req.body
@@ -22,14 +21,13 @@ export async function addOrganization(req, res) {
 
 // DELETE
 export async function deleteOrganization(req, res) {
+  try{
   const orgId = {'_id': new ObjectId(req.params.orgId)}
-  await organizationsCollection
-  .findOneAndDelete( orgId )
-  .catch(err => {
-    res.status(500).send(err)
-    return
-  })
-  res.status(201).send({message: 'Organization has been deleted'})
+  await organizationsCollection.findOneAndDelete( orgId )
+  await getAllOrganizations(req, res)
+  } catch(error) {
+  res.status(500).send({message: 'Error while deleting'})
+ }
 }
 
 // PATCH

@@ -38,5 +38,6 @@ export async function updateOrganization(req, res) {
 
   const query = await organizationsCollection.findOneAndUpdate(orgId, updateOrg, returnOption)
   .catch(err => res.status(500).send(err))
+  await getAllOrganizations(req, res)
   res.status(201).send({message: 'Organization has been updated'})
 }

@@ -28,11 +28,12 @@ export async function signup(req, res) {
     return
   }
   // Check to see if email already exists
-  // const check = await usersCollection.findOne({email: email.toLowerCase()})
-  // if(check.exists) {
-  //   res.status(401).send({message: 'Email already in use, please try logging in.'})
-  //   return
-  // }
+  const check = await usersCollection.findOne({email: email.toLowerCase()})
+  if(check) {
+    res.status(401).send({message: 'Email already in use, please try logging in.'})
+    return
+  }
   const hashedPassword = hashSync(password, salt)
   await usersCollection.insertOne({email: email.toLowerCase(), password: hashedPassword})
+  login(req, res)
 }

@@ -1,5 +1,6 @@
 import { hashSync } from 'bcrypt';
 import jwt from 'jsonwebtoken'
+import { ObjectId } from 'mongodb';
 import { usersCollection } from "./dbConnect.js";
 import { secretKey, salt } from '../secrets.js';
 
@@ -22,7 +23,7 @@ export async function login(req, res) {
 
 
 export async function signup(req, res) {
-  const {email, password} = req.body
+  const {email, password, firstName, lastName} = req.body
   if(!email || !password) {
     res.status(400).send({message: 'Email and password both required.'})
     return
@@ -34,6 +35,27 @@ export async function signup(req, res) {
     return
   }
   const hashedPassword = hashSync(password, salt)
-  await usersCollection.insertOne({email: email.toLowerCase(), password: hashedPassword})
+  await usersCollection.insertOne({email: email.toLowerCase(), password: hashedPassword, firstName, lastName})
   login(req, res)
+}
+
+export async function addFavOrg(req, res) {
+  const userId = {'_id': new ObjectId(req.params.userId)}
+  const orgId = new ObjectId(req.params.orgId)
+  try {
+    const result = await usersCollection.updateOne(
+      userId,
+      {$addToSet: {favorites: orgId}}
+      )
+      if(result.modifiedCount === 1) {
+        // res.send({message: 'Organization added to favorites'})
+        res.send(user)
+      } else {
+        res.status(404).send({message: 'user not found'})
+      }
+      
+    } catch (error) {
+      console.error(error)
+      res.status(500).send({message: 'server error'})
+    }
 }

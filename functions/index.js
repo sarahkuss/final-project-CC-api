@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import functions from 'firebase-functions'
 import { addOrganization, deleteOrganization, getAllOrganizations, updateOrganization } from './src/organizations.js'
-import { login, signup } from './src/users.js'
+import { addFavOrg, login, signup } from './src/users.js'
 
 const PORT = 3000
 
@@ -17,6 +17,8 @@ app.patch('/organizations/:orgId', updateOrganization)
 
 app.post('/login', login)
 app.post('/signup', signup)
+
+app.patch('/users/:userId/favorites/:orgId', addFavOrg)
 
 
 app.listen(PORT, () => {

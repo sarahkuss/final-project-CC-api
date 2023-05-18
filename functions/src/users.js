@@ -43,7 +43,6 @@ export async function addFavOrg(req, res) {
   const userId = {'_id': new ObjectId(req.params.userId)}
   const orgId = new ObjectId(req.params.orgId)
   const user = await usersCollection.findOne(userId)
-  delete user.password
   try {
     const result = await usersCollection.updateOne(
       userId,
@@ -51,7 +50,9 @@ export async function addFavOrg(req, res) {
       )
       if(result.modifiedCount === 1) {
         // res.send({message: 'Organization added to favorites'})
-        res.send(user)
+        const updatedUser = await usersCollection.findOne(userId)
+        delete updatedUser.password
+        res.send(updatedUser)
       } else {
         res.status(404).send({message: 'user not found'})
       }

@@ -33,6 +33,16 @@ export async function addOrganization(req, res) {
 
 // DELETE
 export async function deleteOrganization(req, res) {
+  const token = req.headers.authorization
+  if(!token) {
+    res.status(401).send({message: "Unauthorized. A valid token is required."})
+    return
+  }
+  const decoded = jwt.verify(token, secretKey)
+  if(!decoded) {
+    res.status(401).send({message: "Unauthorized. A valid token is required."})
+    return
+  }
   try{
   const orgId = {'_id': new ObjectId(req.params.orgId)}
   await organizationsCollection.findOneAndDelete( orgId )

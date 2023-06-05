@@ -1,5 +1,7 @@
-import { organizationsCollection } from "./dbConnect.js"
 import { ObjectId } from "mongodb"
+import jwt from "jsonwebtoken"
+import { organizationsCollection } from "./dbConnect.js"
+import { secretKey } from "../secrets.js"
 
 // GET ALL
 export async function getAllOrganizations(req, res) {
@@ -9,6 +11,16 @@ export async function getAllOrganizations(req, res) {
 
 // POST
 export async function addOrganization(req, res) {
+  const token = req.headers.authorization
+  if(!token) {
+    res.status(401).send({message: "Unauthorized. A valid token is required."})
+    return
+  }
+  const decoded = jwt.verify(token, secretKey)
+  if(!decoded) {
+    res.status(401).send({message: "Unauthorized. A valid token is required."})
+    return
+  }
   const newOrganization = req.body
   await organizationsCollection
   .insertOne(newOrganization)
@@ -32,6 +44,10 @@ export async function deleteOrganization(req, res) {
 
 // PATCH
 export async function updateOrganization(req, res) {
+  if(!req.headers.check || req.headers.check !== 'isAdmin') {
+    res.status(401).send({message: 'not authorized'})
+    return
+  }
   const orgId = {'_id': new ObjectId(req.params.orgId)}
   const updateOrg = { $set: req.body }
   const returnOption = { returnNewDocument: true}

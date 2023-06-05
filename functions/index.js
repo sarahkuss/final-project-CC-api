@@ -13,7 +13,7 @@ app.use(express.json())
 app.get('/organizations', getAllOrganizations)
 app.post('/organizations', addOrganization)
 app.delete('/organizations/:orgId', deleteOrganization)
-app.patch('/organizations/:orgId', updateOrganization)
+// app.patch('/organizations/:orgId', updateOrganization)
 
 app.post('/login', login)
 app.post('/signup', signup)
